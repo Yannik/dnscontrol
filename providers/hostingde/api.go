@@ -19,6 +19,7 @@ type hostingdeProvider struct {
 	filterAccountId string
 	baseURL         string
 	nameservers     []string
+	defaultContacts []contact
 }
 
 func (hp *hostingdeProvider) getDomainConfig(domain string) (*domainConfig, error) {
@@ -44,6 +45,42 @@ func (hp *hostingdeProvider) getDomainConfig(domain string) (*domainConfig, erro
 	}
 
 	return domainConf[0], nil
+}
+
+// NOTE: THIS DOES NOT WORK YET; CONTACTS HANDLING IS MISSING
+func (hp *hostingdeProvider) createDomain(dc *models.DomainConfig) error {
+	t, err := idna.ToASCII(dc.Name)
+	if err != nil {
+		return err
+	}
+
+	var contacts []contact
+
+	var nameservers []nameserver
+	for _, ns := range dc.Nameservers {
+		nameservers = append(nameservers, nameserver{Name: ns.Name})
+	}
+
+	domainConf := domainConfig{
+		Name:        t,
+		Nameservers: nameservers,
+		Contacts:    contacts,
+	}
+	if err != nil {
+		return err
+	}
+
+	domainConf.Nameservers = nameservers
+
+	params := request{
+		Domain: &domainConf,
+	}
+
+	_, err = hp.get("dns", "domainCreate", params)
+	if err != nil {
+		return fmt.Errorf("error creating domain: %w", err)
+	}
+	return nil
 }
 
 func (hp *hostingdeProvider) createZone(domain string) error {

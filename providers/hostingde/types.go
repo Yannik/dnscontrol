@@ -49,10 +49,15 @@ type nameserver struct {
 }
 
 type domainConfig struct {
-	Name                string          `json:"name"`
-	Contacts            json.RawMessage `json:"contacts"`
-	Nameservers         []nameserver    `json:"nameservers"`
-	TransferLockEnabled bool            `json:"transferLockEnabled"`
+	Name                string       `json:"name"`
+	Contacts            []contact    `json:"contacts"`
+	Nameservers         []nameserver `json:"nameservers"`
+	TransferLockEnabled bool         `json:"transferLockEnabled"`
+}
+
+type contact struct {
+	Contact string `json:"contact"`
+	Type    string `json:"type"`
 }
 
 type zoneConfig struct {

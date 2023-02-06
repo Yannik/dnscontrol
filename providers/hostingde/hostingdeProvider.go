@@ -57,12 +57,18 @@ func newHostingde(m map[string]string, providermeta json.RawMessage) (*hostingde
 	}
 	baseURL = strings.TrimSuffix(baseURL, "/")
 
+	var defaultContacts []contact
+	if m["defaultContacts"] != "" {
+		json.Unmarshal([]byte(m["defaultContacts"]), &defaultContacts)
+	}
+
 	hp := &hostingdeProvider{
 		authToken:       authToken,
 		ownerAccountID:  ownerAccountID,
 		filterAccountId: filterAccountId,
 		baseURL:         baseURL,
 		nameservers:     defaultNameservers,
+		defaultContacts: defaultContacts,
 	}
 
 	if len(providermeta) > 0 {
