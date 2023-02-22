@@ -50,14 +50,16 @@ type nameserver struct {
 
 type domainConfig struct {
 	Name                string       `json:"name"`
-	Contacts            []contact    `json:"contacts"`
+	Contacts            contacts     `json:"contacts"`
 	Nameservers         []nameserver `json:"nameservers"`
 	TransferLockEnabled bool         `json:"transferLockEnabled"`
 }
 
-type contact struct {
-	Contact string `json:"contact"`
-	Type    string `json:"type"`
+type contacts struct {
+	Admin string `json:"admin"`
+	Tech  string `json:"tech"`
+	Owner string `json:"owner"`
+	Zone  string `json:"zone"`
 }
 
 type zoneConfig struct {

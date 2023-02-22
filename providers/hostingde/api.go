@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/StackExchange/dnscontrol/v3/models"
 	"io"
 	"net/http"
 
@@ -19,7 +20,7 @@ type hostingdeProvider struct {
 	filterAccountId string
 	baseURL         string
 	nameservers     []string
-	defaultContacts []contact
+	defaultContacts contacts
 }
 
 func (hp *hostingdeProvider) getDomainConfig(domain string) (*domainConfig, error) {
@@ -54,8 +55,6 @@ func (hp *hostingdeProvider) createDomain(dc *models.DomainConfig) error {
 		return err
 	}
 
-	var contacts []contact
-
 	var nameservers []nameserver
 	for _, ns := range dc.Nameservers {
 		nameservers = append(nameservers, nameserver{Name: ns.Name})
@@ -64,7 +63,7 @@ func (hp *hostingdeProvider) createDomain(dc *models.DomainConfig) error {
 	domainConf := domainConfig{
 		Name:        t,
 		Nameservers: nameservers,
-		Contacts:    contacts,
+		Contacts:    hp.defaultContacts,
 	}
 	if err != nil {
 		return err

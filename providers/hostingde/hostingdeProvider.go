@@ -42,7 +42,8 @@ func init() {
 }
 
 type providerMeta struct {
-	DefaultNS []string `json:"default_ns"`
+	DefaultNS       []string `json:"default_ns"`
+	DefaultContacts contacts `json:"default_contacts"`
 }
 
 func newHostingde(m map[string]string, providermeta json.RawMessage) (*hostingdeProvider, error) {
@@ -57,7 +58,7 @@ func newHostingde(m map[string]string, providermeta json.RawMessage) (*hostingde
 	}
 	baseURL = strings.TrimSuffix(baseURL, "/")
 
-	var defaultContacts []contact
+	var defaultContacts contacts
 	if m["defaultContacts"] != "" {
 		json.Unmarshal([]byte(m["defaultContacts"]), &defaultContacts)
 	}
@@ -68,7 +69,6 @@ func newHostingde(m map[string]string, providermeta json.RawMessage) (*hostingde
 		filterAccountId: filterAccountId,
 		baseURL:         baseURL,
 		nameservers:     defaultNameservers,
-		defaultContacts: defaultContacts,
 	}
 
 	if len(providermeta) > 0 {
@@ -80,6 +80,11 @@ func newHostingde(m map[string]string, providermeta json.RawMessage) (*hostingde
 		if len(pm.DefaultNS) > 0 {
 			hp.nameservers = pm.DefaultNS
 		}
+
+		// TODO: Fix this (by setting breakpoint and observing the contact of pm.DefaultContacts)
+		/*if pm.DefaultContacts != nil {
+			hp.defaultContacts = pm.DefaultContacts
+		}*/
 	}
 
 	return hp, nil
